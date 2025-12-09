@@ -31,3 +31,15 @@ h1 {
     font-weight: bold;
     cursor: pointer;
 }
+
+.cell.taken {
+    cursor: not-allowed;
+    color: #4d3c3c;
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}

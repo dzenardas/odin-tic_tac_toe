@@ -22,6 +22,21 @@ function printBoard() {
     console.log(boardString);
 }
 
+function handleCellChoice(row, col, cellDiv) {
+    if (gameBoard.isGameOver) {
+        alert("Game is over! Reset the game to play again.");
+        return;
+    }
+
+    if (gameBoard.board[row][col] !== "") {
+        alert("This cell is already taken.");
+        return;
+    }
+
+    makeMove(row, col);
+    domRenderer.render(gameBoard.board);
+}
+
 function checkWin() {
     const board = gameBoard.board;
     const currentPlayer = gameBoard.currentPlayer;
@@ -115,30 +130,24 @@ const domRenderer = {
     render(board) {
         this.container.innerHTML = "";
 
-    for (let row = 0; row < 3; row++) {
-        for (let col = 0; col < 3; col++) {
-            const cellDiv = document.createElement("div");
-            cellDiv.classList.add("cell");
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 3; col++) {
+                const cellDiv = document.createElement("div");
+                cellDiv.classList.add("cell");
 
-            cellDiv.textContent = board[row][col];
+                cellDiv.textContent = board[row][col];
 
-            this.container.appendChild(cellDiv);
+                cellDiv.addEventListener("click", () => handleCellChoice(row, col));
+
+                this.container.appendChild(cellDiv);
             }
         }
     }
 };
 
-const testBoard = [
-  ["X", "O", "X"],
-  ["O", "X", "O"],
-  ["X", "O", "X"]
-];
-
-domRenderer.render(testBoard);
+document.getElementById("reset-button").addEventListener("click", function() {
+    resetGame();
+    domRenderer.render(gameBoard.board); 
+});
 
 resetGame();
-makeMove(0, 0); // X
-makeMove(1, 1); // O
-makeMove(0, 1); // X
-makeMove(2, 2); // O
-makeMove(0, 2); // X wins!
