@@ -1,3 +1,5 @@
+const statusDisplay = document.getElementById("gameStatus");
+
 const gameBoard = {
     board: [
         ["", "", ""],
@@ -5,7 +7,8 @@ const gameBoard = {
         ["", "", ""]
     ],
     currentPlayer: "X",
-    isGameOver: false
+    isGameOver: false,
+    playerNames: { X: "Player X", O: "Player O" }
 };
 
 function printBoard() {
@@ -22,7 +25,7 @@ function printBoard() {
     console.log(boardString);
 }
 
-function handleCellChoice(row, col, cellDiv) {
+function handleCellChoice(row, col) {
     if (gameBoard.isGameOver) {
         alert("Game is over! Reset the game to play again.");
         return;
@@ -35,6 +38,7 @@ function handleCellChoice(row, col, cellDiv) {
 
     makeMove(row, col);
     domRenderer.render(gameBoard.board);
+    updateStatus();
 }
 
 function checkWin() {
@@ -47,7 +51,7 @@ function checkWin() {
             board[row][1] === currentPlayer &&
             board[row][2] === currentPlayer
         ) {
-            return true;
+            return [[row,0],[row,1],[row,2]];
         }
     }
 
@@ -57,7 +61,7 @@ function checkWin() {
             board[1][col] === currentPlayer &&
             board[2][col] === currentPlayer
         ) {
-            return true;
+            return [[0,col],[1,col],[2,col]];
         }
     }
 
@@ -66,7 +70,7 @@ function checkWin() {
         board[1][1] === currentPlayer &&
         board[2][2] === currentPlayer
     ) {
-        return true;
+        return [[0,0],[1,1],[2,2]];
     }
 
     if (
@@ -74,10 +78,10 @@ function checkWin() {
         board[1][1] === currentPlayer &&
         board[2][0] === currentPlayer
     ) {
-        return true;
+        return [[0,2],[1,1],[2,0]];
     }
 
-    return false;
+    return null;
 }
 
 function checkTie() {
@@ -86,31 +90,44 @@ function checkTie() {
 
 function makeMove(row, col) {
     if (gameBoard.isGameOver) {
-        console.log("Game is over! Start a new game.");
         return;
     }
 
     if (gameBoard.board[row][col] !== "") {
-        console.log("Cell is already taken!");
         return;
     }
 
     gameBoard.board[row][col] = gameBoard.currentPlayer;
     printBoard();
 
-    if (checkWin()) {
-        console.log(`Player ${gameBoard.currentPlayer} wins!`);
+    const winningCells = checkWin();
+
+    if (winningCells) {
+        statusDisplay.textContent = `${gameBoard.playerNames[gameBoard.currentPlayer]} wins!`;
         gameBoard.isGameOver = true;
+
+        domRenderer.render(gameBoard.board);
+
+        setTimeout(() => {
+            winningCells.forEach(([r, c]) => {
+                const index = r * 3 + c;
+                domRenderer.container.children[index].classList.add("win-cell");
+            });
+        }, 10);
+        
         return;
     }
 
     if (checkTie()) {
-        console.log("It's a tie!");
+        statusDisplay.textContent = "It's a tie!";
         gameBoard.isGameOver = true;
+        domRenderer.render(gameBoard.board);
         return;
     }
 
     gameBoard.currentPlayer = gameBoard.currentPlayer === "X" ? "O" : "X";
+    domRenderer.render(gameBoard.board);
+    updateStatus();
 }
 
 function resetGame() {
@@ -123,6 +140,14 @@ function resetGame() {
     gameBoard.isGameOver = false;
     console.log("Game reset!");
     printBoard();
+    updateStatus();
+    domRenderer.render(gameBoard.board);
+}
+
+function updateStatus() {
+    if (!gameBoard.isGameOver) {
+        statusDisplay.textContent = `${gameBoard.playerNames[gameBoard.currentPlayer]}'s turn (${gameBoard.currentPlayer})`;
+    }
 }
 
 const domRenderer = {
@@ -135,9 +160,11 @@ const domRenderer = {
                 const cellDiv = document.createElement("div");
                 cellDiv.classList.add("cell");
 
-                cellDiv.textContent = board[row][col];
+                cellDiv.textContent = board[row][col] || ""; 
 
-                cellDiv.addEventListener("click", () => handleCellChoice(row, col));
+                cellDiv.addEventListener("click", function(){
+                    handleCellChoice(row, col)
+                });
 
                 this.container.appendChild(cellDiv);
             }
@@ -148,6 +175,19 @@ const domRenderer = {
 document.getElementById("reset-button").addEventListener("click", function() {
     resetGame();
     domRenderer.render(gameBoard.board); 
+});
+
+document.getElementById("start-button").addEventListener("click", function() {
+    const playerXName = document.getElementById("playerX").value.trim();
+    const playerOName = document.getElementById("playerO").value.trim();
+
+    gameBoard.playerNames.X = playerXName || "Player X";
+    gameBoard.playerNames.O = playerOName || "Player O";
+    gameBoard.currentPlayer = "X";
+    gameBoard.isGameOver = false;
+
+    resetGame();
+    domRenderer.render(gameBoard.board);
 });
 
 resetGame();

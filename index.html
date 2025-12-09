@@ -8,10 +8,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h1>Tic Tac Toe</h1>
+    <div class="container">
+        <h1>Tic Tac Toe</h1>
 
-    <div id="gameContainer"></div>
-    <button id="reset-button">Reset Game</button>
+        <div class="player-inputs">
+            <input type="text" id="playerX" placeholder="Player X name">
+            <input type="text" id="playerO" placeholder="Player O name">
+            <button id="start-button">Start Game</button>
+        </div>
+
+        <div id="gameStatus"></div>
+        
+        <div id="gameContainer"></div>
+
+        <button id="reset-button">Reset Game</button>
+    </div>
+
 
     <script src="script.js"></script>
 </body>
