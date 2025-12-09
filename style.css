@@ -1,0 +1,33 @@
+* {
+    outline: 2px solid red;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Roboto;
+}
+
+h1 {
+    align-items: center;
+    justify-content: center;
+}
+
+#gameContainer {
+    display: grid;
+    grid-template-columns: repeat(3, 60px);
+    grid-template-rows: repeat(3, 60px);
+    gap: 5px;
+    margin-top: 20px;
+}
+
+.cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #bebebe;
+    font-size: 36px;
+    font-weight: bold;
+    cursor: pointer;
+}

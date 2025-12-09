@@ -110,6 +110,32 @@ function resetGame() {
     printBoard();
 }
 
+const domRenderer = {
+    container: document.getElementById("gameContainer"),
+    render(board) {
+        this.container.innerHTML = "";
+
+    for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < 3; col++) {
+            const cellDiv = document.createElement("div");
+            cellDiv.classList.add("cell");
+
+            cellDiv.textContent = board[row][col];
+
+            this.container.appendChild(cellDiv);
+            }
+        }
+    }
+};
+
+const testBoard = [
+  ["X", "O", "X"],
+  ["O", "X", "O"],
+  ["X", "O", "X"]
+];
+
+domRenderer.render(testBoard);
+
 resetGame();
 makeMove(0, 0); // X
 makeMove(1, 1); // O
